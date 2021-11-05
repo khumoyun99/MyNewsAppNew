@@ -1,11 +1,10 @@
 package com.example.mynewsapp.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.mynewsapp.R
 import com.example.mynewsapp.databinding.FragmentItemLatestNewsBinding
@@ -26,6 +25,10 @@ class ItemLatestNewsFragment : Fragment() {
         binding.backArrowImg.setOnClickListener {
             findNavController().popBackStack()
         }
+        binding.favoriteImg.setOnClickListener {
+            binding.favoriteImg.setBackgroundResource(R.drawable.favorite_shape)
+        }
+
         Picasso.get().load(article.urlToImage).into(binding.itemLatestImg)
         binding.textTv.text = article.description
 
