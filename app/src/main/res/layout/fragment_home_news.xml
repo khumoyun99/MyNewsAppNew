@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.HomeNewsFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/search_ll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="15dp"
+                android:background="@drawable/linear_search_shape"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/notification_img">
+
+                <EditText
+                    android:id="@+id/search_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:background="@color/white"
+                    android:hint="Search.."
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/search_img"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="TouchTargetSizeCheck" />
+                <ImageView
+                    android:id="@+id/search_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/search_edit"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:src="@drawable/ic_baseline_search_24"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/notification_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/notificationimg"
+                android:scaleType="centerCrop"
+                android:layout_marginRight="15dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/search_ll"
+                app:layout_constraintBottom_toBottomOf="@id/search_ll"
+                app:layout_constraintLeft_toRightOf="@id/search_ll"
+                />
+            <TextView
+                android:id="@+id/latest_news_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Latest News"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_ll"
+                />
+            <TextView
+                android:id="@+id/see_all_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="See All"
+                android:textColor="#0080FF"
+                android:textStyle="normal"
+                android:textSize="14sp"
+                android:padding="10dp"
+                android:layout_marginRight="10dp"
+                app:layout_constraintTop_toTopOf="@id/latest_news_tv"
+                app:layout_constraintBottom_toBottomOf="@id/latest_news_tv"
+                app:layout_constraintRight_toLeftOf="@id/arrow_img"
+                />
+            <ImageView
+                android:id="@+id/arrow_img"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/arrowimg"
+                android:layout_marginRight="15dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/latest_news_tv"
+                app:layout_constraintBottom_toBottomOf="@id/latest_news_tv"
+                />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/latest_rv"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:layout_marginTop="10dp"
+                tools:listitem="@layout/item_new_rv"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/latest_news_tv"
+                />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayoutNews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabIndicatorAnimationMode="elastic"
+                app:tabIndicatorGravity="stretch"
+                app:tabMode="scrollable"
+                app:tabTextColor="@color/black"
+                app:tabGravity="fill"
+                android:layout_marginTop="5dp"
+                app:tabSelectedTextColor="@color/white"
+                app:tabIndicator="@drawable/tab_item"
+                app:tabIndicatorFullWidth="true"
+                android:layout_marginLeft="10dp"
+                app:tabRippleColor="@android:color/transparent"
+                app:layout_constraintTop_toBottomOf="@id/latest_rv">
+
+                <com.google.android.material.tabs.TabItem
+                    android:text="Healthy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Technology"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Finance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Arts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Sports"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Medic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.tabs.TabLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/all_rv_new"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/all_new_rv_item"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/tabLayoutNews"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

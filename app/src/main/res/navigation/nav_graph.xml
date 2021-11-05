@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.mynewsapp.fragments.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_itemLatestNewsFragment"
+            app:destination="@id/itemLatestNewsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_homeNewsFragment"
+            app:destination="@id/homeNewsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_favoriteNewsFragment"
+            app:destination="@id/favoriteNewsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeNewsFragment"
+        android:name="com.example.mynewsapp.fragments.HomeNewsFragment"
+        android:label="fragment_home_news"
+        tools:layout="@layout/fragment_home_news" />
+    <fragment
+        android:id="@+id/favoriteNewsFragment"
+        android:name="com.example.mynewsapp.fragments.FavoriteNewsFragment"
+        android:label="fragment_favorite_news"
+        tools:layout="@layout/fragment_favorite_news" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.mynewsapp.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/itemLatestNewsFragment"
+        android:name="com.example.mynewsapp.fragments.ItemLatestNewsFragment"
+        android:label="fragment_item_latest_news"
+        tools:layout="@layout/fragment_item_latest_news" />
+</navigation>

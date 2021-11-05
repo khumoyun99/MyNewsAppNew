@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeNews"
+        android:enabled="true"
+        android:icon="@drawable/homenews"
+        android:title="Home"
+        />
+     <item
+         android:id="@+id/homeFavorite"
+         android:enabled="true"
+         android:icon="@drawable/favoritenews"
+         android:title="Favorite" />
+     <item
+         android:id="@+id/homeProfile"
+         android:enabled="true"
+         android:icon="@drawable/profileimg"
+         android:title="Profile" />
+
+</menu>
