@@ -13,9 +13,11 @@ import com.squareup.picasso.Picasso
 
 class ItemLatestNewsFragment : Fragment() {
     private lateinit var binding:FragmentItemLatestNewsBinding
+    private var islike=false
 
 
-    override fun onCreateView(
+    override fun onCreateView
+                (
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
@@ -25,8 +27,15 @@ class ItemLatestNewsFragment : Fragment() {
         binding.backArrowImg.setOnClickListener {
             findNavController().popBackStack()
         }
-        binding.favoriteImg.setOnClickListener {
-            binding.favoriteImg.setBackgroundResource(R.drawable.favorite_shape)
+        binding.favoriteImg.setOnClickListener{
+            if(islike){
+                binding.favoriteImg.setBackgroundResource(R.drawable.favorite_shape_un)
+                islike=false
+            }else{
+                binding.favoriteImg.setBackgroundResource(R.drawable.favorite_shape)
+                islike=true
+
+            }
         }
 
         Picasso.get().load(article.urlToImage).into(binding.itemLatestImg)

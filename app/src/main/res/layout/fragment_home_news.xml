@@ -20,7 +20,8 @@
                 android:id="@+id/search_ll"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginHorizontal="15dp"
                 android:background="@drawable/linear_search_shape"
@@ -117,7 +118,7 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayoutNews"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 app:tabIndicatorAnimationMode="elastic"
                 app:tabIndicatorGravity="stretch"
                 app:tabMode="scrollable"
@@ -152,7 +153,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <com.google.android.material.tabs.TabItem
-                    android:text="Medic"
+                    android:text="Medicine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </com.google.android.material.tabs.TabLayout>

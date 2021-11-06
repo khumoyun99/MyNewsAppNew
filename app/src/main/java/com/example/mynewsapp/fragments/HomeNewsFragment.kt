@@ -104,6 +104,15 @@ class HomeNewsFragment : Fragment() {
             }
         })
 
+        binding.searchImg.setOnClickListener {
+            val searchText = binding.searchEdit.text.toString()
+            if(searchText.isNotEmpty()){
+                val bundle = Bundle()
+                bundle.putString("search",searchText)
+                findNavController().navigate(R.id.searchFragment,bundle)
+            }
+        }
+
 
 
         return binding.root
