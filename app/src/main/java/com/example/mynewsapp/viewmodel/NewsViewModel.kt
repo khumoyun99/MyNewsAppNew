@@ -16,6 +16,8 @@ class NewsViewModel(private val networkHelper: NetworkHelper):ViewModel() {
 
     private val liveData = MutableLiveData<NewsResource>()
     private val liveData1 = MutableLiveData<NewsResource>()
+    private val liveDataSearch = MutableLiveData<NewsResource>()
+    private val liveDataSortBy = MutableLiveData<NewsResource>()
     private val newsRepository = NewsRepository(ApiClient.apiService)
 
     init {
@@ -42,6 +44,26 @@ class NewsViewModel(private val networkHelper: NetworkHelper):ViewModel() {
         }
         return liveData
     }
+    fun getAllNewsSortBy(type:String,sortBy:String):LiveData<NewsResource>{
+        if(networkHelper.isNetworkConnected()){
+            viewModelScope.launch{
+                liveDataSortBy.postValue(NewsResource.LOADING)
+                newsRepository.getResultNewsSortBy(type,sortBy)
+                    .catch {
+                        liveDataSortBy.postValue(NewsResource.ERROR(it.message.toString()))
+                    }
+                    .collect{
+                        if(it.isSuccessful){
+                            liveDataSortBy.postValue(NewsResource.SUCCESS(it.body()!!))
+                        }
+                    }
+            }
+
+        }else{
+            liveDataSortBy.postValue(NewsResource.ERROR("Not internet connection!"))
+        }
+        return liveDataSortBy
+    }
     fun getAllNews1(type:String):LiveData<NewsResource>{
         if(networkHelper.isNetworkConnected()){
             viewModelScope.launch{
@@ -61,6 +83,27 @@ class NewsViewModel(private val networkHelper: NetworkHelper):ViewModel() {
             liveData1.postValue(NewsResource.ERROR("Not internet connection!"))
         }
         return liveData1
+    }
+
+    fun getAllNewsSearch(type:String):LiveData<NewsResource>{
+        if(networkHelper.isNetworkConnected()){
+            viewModelScope.launch{
+                liveDataSearch.postValue(NewsResource.LOADING)
+                newsRepository.getResultNews(type)
+                    .catch {
+                        liveDataSearch.postValue(NewsResource.ERROR(it.message.toString()))
+                    }
+                    .collect{
+                        if(it.isSuccessful){
+                            liveDataSearch.postValue(NewsResource.SUCCESS(it.body()!!))
+                        }
+                    }
+            }
+
+        }else{
+            liveDataSearch.postValue(NewsResource.ERROR("Not internet connection!"))
+        }
+        return liveDataSearch
     }
 
 }

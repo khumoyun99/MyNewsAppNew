@@ -7,8 +7,14 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("?apiKey=ddd8a92aca7b497ab2015e10b53a16c2")
+    @GET("?apiKey=38cc2d27abe94b76a273d0a6acb5a0f7")
     suspend fun getNews(
         @Query("q")q:String
+    ):Response<AllNews>
+
+    @GET("?apiKey=38cc2d27abe94b76a273d0a6acb5a0f7")
+    suspend fun getNewsSortBy(
+        @Query("q")q:String,
+        @Query("sortBy")sortBy:String
     ):Response<AllNews>
 }

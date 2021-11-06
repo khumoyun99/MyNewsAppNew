@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -33,6 +34,8 @@ class SearchFragment : Fragment() {
     private lateinit var networkHelper: NetworkHelper
     private lateinit var allRvNewsRvAdapter: AllNewsRvAdapter
     private lateinit var articleList:ArrayList<Article>
+    private var tabList = arrayListOf("healthy","technology","finance","arts","sports","medicine")
+//    private var isRecomment
 
     private val TAG = "SearchFragment"
     private var param1: String? = null
@@ -53,11 +56,51 @@ class SearchFragment : Fragment() {
         binding = FragmentSearchBinding.inflate(inflater,container,false)
         networkHelper = NetworkHelper(requireContext())
         val bundle = Bundle(arguments)
-        val search = bundle.getString("search")
+        var search = bundle.getString("search")
+        newsViewModel = ViewModelProvider(requireActivity(),NewsViewModelFactory(networkHelper))[NewsViewModel::class.java]
 
 
         binding.apply {
+            searchImg.setOnClickListener{
+                search = binding.searchEdit.text.toString()
+                newsViewModel.getAllNewsSearch(search.toString()).observe(requireActivity(),{
+                    when(it){
+                        is NewsResource.LOADING -> {
+                            Log.d(TAG, "onCreateView: Loading")
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+                        is NewsResource.ERROR -> {
+                            Log.d(TAG, "onCreateView: ${it.message}")
+                            binding.progressBar.visibility = View.INVISIBLE
+                            binding.errorMessageTv.text = "Not internet connection"
+                            binding.errorMessageTv.visibility = View.VISIBLE
+                        }
+                        is NewsResource.SUCCESS ->{
+                            Log.d(TAG, "onCreateView: ${it.allNews}")
+                            binding.progressBar.visibility = View.INVISIBLE
+                            articleList = ArrayList(it.allNews.articles)
+                            if(it.allNews.totalResults!=0){
+                                binding.errorMessageTv.visibility = View.INVISIBLE
+                                allRvNewsRvAdapter = AllNewsRvAdapter(articleList,object :AllNewsRvAdapter.OnItemClickListener{
+                                    override fun onItemClick(article: Article) {
+                                        val bundle1 = Bundle()
+                                        bundle1.putSerializable("article",article)
+                                        findNavController().navigate(R.id.itemLatestNewsFragment,bundle1)
+                                    }
+                                })
+                                binding.allRvNew.adapter = allRvNewsRvAdapter
+                            }else{
+                                binding.errorMessageTv.text = "No News"
+                                binding.errorMessageTv.visibility = View.VISIBLE
+                            }
+
+                        }
+                    }
+                })
+            }
+
             binding.searchEdit.setText(search.toString())
+
             filterLl.setOnClickListener {
                 filterImg.setImageResource(R.drawable.filter_sel)
                 filterLl.setBackgroundResource(R.drawable.selected_tab)
@@ -65,8 +108,23 @@ class SearchFragment : Fragment() {
 
                 val bottomSheetDialog = BottomSheetDialog(requireContext())
                 val customBottomSheetDialog = CustomBottomSheetBinding.inflate(layoutInflater)
-
                 bottomSheetDialog.setContentView(customBottomSheetDialog.root)
+
+                customBottomSheetDialog.recommendedTv.setOnClickListener {
+                    it.setBackgroundResource(R.drawable.selected_tab)
+                }
+                customBottomSheetDialog.latestTv.setOnClickListener {
+                    it.setBackgroundResource(R.drawable.selected_tab)
+                }
+                customBottomSheetDialog.mostViewedTv.setOnClickListener {
+                    it.setBackgroundResource(R.drawable.selected_tab)
+                }
+                customBottomSheetDialog.channelTv.setOnClickListener {
+                    it.setBackgroundResource(R.drawable.selected_tab)
+                }
+                customBottomSheetDialog.followingTv.setOnClickListener {
+                    it.setBackgroundResource(R.drawable.selected_tab)
+                }
 
                 customBottomSheetDialog.saveCv.setOnClickListener {
                     bottomSheetDialog.dismiss()
@@ -78,29 +136,38 @@ class SearchFragment : Fragment() {
             }
         }
 
-        newsViewModel = ViewModelProvider(requireActivity(),NewsViewModelFactory(networkHelper))[NewsViewModel::class.java]
-        newsViewModel.getAllNews(search.toString()).observe(requireActivity(),{
+
+        newsViewModel.getAllNewsSearch(search.toString()).observe(requireActivity(),{
             when(it){
                 is NewsResource.LOADING -> {
                     Log.d(TAG, "onCreateView: Loading")
+                    binding.progressBar.visibility = View.VISIBLE
                 }
                 is NewsResource.ERROR -> {
                     Log.d(TAG, "onCreateView: ${it.message}")
+                    binding.progressBar.visibility = View.INVISIBLE
+                    binding.errorMessageTv.text = "Not internet connection"
+                    binding.errorMessageTv.visibility = View.VISIBLE
                 }
                 is NewsResource.SUCCESS ->{
                     Log.d(TAG, "onCreateView: ${it.allNews}")
+                    binding.progressBar.visibility = View.INVISIBLE
                     articleList = ArrayList(it.allNews.articles)
-                    if(articleList.size==0){
-                        articleList = ArrayList(emptyList())
+                    if(it.allNews.totalResults!=0){
+                        binding.errorMessageTv.visibility = View.INVISIBLE
+                        allRvNewsRvAdapter = AllNewsRvAdapter(articleList,object :AllNewsRvAdapter.OnItemClickListener{
+                            override fun onItemClick(article: Article) {
+                                val bundle1 = Bundle()
+                                bundle1.putSerializable("article",article)
+                                findNavController().navigate(R.id.itemLatestNewsFragment,bundle1)
+                            }
+                        })
+                        binding.allRvNew.adapter = allRvNewsRvAdapter
+                    }else{
+                        binding.errorMessageTv.text = "No News"
+                        binding.errorMessageTv.visibility = View.VISIBLE
                     }
-                    allRvNewsRvAdapter = AllNewsRvAdapter(articleList,object :AllNewsRvAdapter.OnItemClickListener{
-                        override fun onItemClick(article: Article) {
-                            val bundle1 = Bundle()
-                            bundle1.putSerializable("article",article)
-                            findNavController().navigate(R.id.itemLatestNewsFragment,bundle1)
-                        }
-                    })
-                    binding.allRvNew.adapter = allRvNewsRvAdapter
+
                 }
             }
         })
@@ -113,6 +180,29 @@ class SearchFragment : Fragment() {
                     filterLl.setBackgroundResource(R.drawable.unselected_tab)
                     filer.setTextColor(Color.BLACK)
                 }
+                newsViewModel.getAllNews1(tabList[tab?.position?:0]).observe(requireActivity(),{
+                    when(it){
+                        is NewsResource.LOADING ->{
+                            Log.d(TAG, "onCreateView: Loading")
+                        }
+                        is NewsResource.ERROR ->{
+                            Log.d(TAG, "onCreateView: ${it.message}")
+                        }
+                        is NewsResource.SUCCESS ->{
+                            Log.d(TAG, "onCreateView: ${it.allNews}")
+                            articleList = ArrayList(it.allNews.articles)
+                            allRvNewsRvAdapter = AllNewsRvAdapter(articleList,object :AllNewsRvAdapter.OnItemClickListener{
+                                override fun onItemClick(article: Article) {
+                                    val bundleSearch = Bundle()
+                                    bundleSearch.putSerializable("article",article)
+                                    findNavController().navigate(R.id.itemLatestNewsFragment,bundleSearch)
+                                }
+                            })
+                            binding.allRvNew.adapter = allRvNewsRvAdapter
+
+                        }
+                    }
+                })
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -138,4 +228,6 @@ class SearchFragment : Fragment() {
                 }
             }
     }
+
+
 }
