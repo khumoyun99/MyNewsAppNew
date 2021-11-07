@@ -42,17 +42,20 @@ class NewsViewModel(
     fun addArticle(article: Article){
         viewModelScope.launch(Dispatchers.IO){
             articleDao.addArticle(article)
-//            liveDataArticle.postValue(article)
         }
     }
 //
-//    fun getAllArticle():LiveData<List<Article>>{
-//        viewModelScope.launch {
-//            val allArticle = articleDao.getAllArticle()
-//        }
-//
-//        return liveDataArticle
+//    fun like(article1: Article):Boolean{
+//        var islike=false
+//        val allArticle = appDatabase.articleDao().getAllArticle()
+//        return islike
 //    }
+
+    fun deleteArticle(article: Article){
+        viewModelScope.launch(Dispatchers.IO) {
+            articleDao.deleteArticle(article)
+        }
+    }
 
     fun getAllNews(type:String):LiveData<NewsResource>{
         if(networkHelper.isNetworkConnected()){

@@ -38,26 +38,41 @@ class ItemLatestNewsFragment : Fragment() {
         appDatabase = AppDatabase.getInstance(requireContext())
         val bundle = Bundle(arguments)
         val article:Article = bundle.getSerializable("article") as Article
+        newsViewModel = ViewModelProvider(
+            requireActivity(),
+            NewsViewModelFactory(
+                networkHelper,
+                application,
+                appDatabase
+            )
+        )[NewsViewModel::class.java]
+
+        newsViewModel.liveDataArticle.observe(requireActivity(),{
+            it.forEach { article1 ->
+                if(article1==article){
+                    islike=true
+                }
+            }
+        })
+        if(islike){
+            binding.favoriteImg.setBackgroundResource(R.drawable.favorite_shape)
+        }else{
+            binding.favoriteImg.setBackgroundResource(R.drawable.favorite_shape_un)
+        }
+
 
         binding.backArrowImg.setOnClickListener {
             findNavController().popBackStack()
         }
+
         binding.favoriteImg.setOnClickListener{
             if(islike){
                 binding.favoriteImg.setBackgroundResource(R.drawable.favorite_shape_un)
                 islike=false
+                newsViewModel.deleteArticle(article)
             }else{
                 binding.favoriteImg.setBackgroundResource(R.drawable.favorite_shape)
                 islike=true
-                newsViewModel = ViewModelProvider(
-                    requireActivity(),
-                    NewsViewModelFactory(
-                        networkHelper,
-                        application,
-                        appDatabase
-                    )
-                )[NewsViewModel::class.java]
-
                 newsViewModel.addArticle(article)
             }
         }
