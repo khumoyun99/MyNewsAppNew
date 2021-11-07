@@ -1,28 +1,58 @@
 package com.example.mynewsapp.viewmodel
 
+import android.app.Activity
+import android.app.Application
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mynewsapp.database.AppDatabase
+import com.example.mynewsapp.models.Article
 import com.example.mynewsapp.repository.NewsRepository
 import com.example.mynewsapp.retrofit.ApiClient
 import com.example.mynewsapp.utils.NetworkHelper
 import com.example.mynewsapp.utils.NewsResource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class NewsViewModel(private val networkHelper: NetworkHelper):ViewModel() {
+class NewsViewModel(
+    private val networkHelper: NetworkHelper,
+    private val application: Application,
+    private val appDatabase:AppDatabase = AppDatabase.getInstance(application)
+):ViewModel() {
 
     private val liveData = MutableLiveData<NewsResource>()
     private val liveData1 = MutableLiveData<NewsResource>()
     private val liveDataSearch = MutableLiveData<NewsResource>()
     private val liveDataSortBy = MutableLiveData<NewsResource>()
     private val newsRepository = NewsRepository(ApiClient.apiService)
+    internal val liveDataArticle:LiveData<List<Article>> = appDatabase.articleDao().getAllArticle()
+    private var articleDao = AppDatabase.getInstance(application).articleDao()
+
+
+
 
     init {
         getAllNews1("healthy")
     }
+
+    fun addArticle(article: Article){
+        viewModelScope.launch(Dispatchers.IO){
+            articleDao.addArticle(article)
+//            liveDataArticle.postValue(article)
+        }
+    }
+//
+//    fun getAllArticle():LiveData<List<Article>>{
+//        viewModelScope.launch {
+//            val allArticle = articleDao.getAllArticle()
+//        }
+//
+//        return liveDataArticle
+//    }
 
     fun getAllNews(type:String):LiveData<NewsResource>{
         if(networkHelper.isNetworkConnected()){

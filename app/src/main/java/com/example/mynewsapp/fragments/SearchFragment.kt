@@ -1,6 +1,7 @@
 package com.example.mynewsapp.fragments
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -11,8 +12,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.mynewsapp.App
 import com.example.mynewsapp.R
 import com.example.mynewsapp.adapter.AllNewsRvAdapter
+import com.example.mynewsapp.database.AppDatabase
 import com.example.mynewsapp.databinding.CustomBottomSheetBinding
 import com.example.mynewsapp.databinding.FragmentSearchBinding
 import com.example.mynewsapp.models.Article
@@ -34,8 +37,16 @@ class SearchFragment : Fragment() {
     private lateinit var networkHelper: NetworkHelper
     private lateinit var allRvNewsRvAdapter: AllNewsRvAdapter
     private lateinit var articleList:ArrayList<Article>
+    private lateinit var appDatabase: AppDatabase
+    private lateinit var application: App
     private var tabList = arrayListOf("healthy","technology","finance","arts","sports","medicine")
-//    private var isRecomment
+    private var isRecommended = false
+    private var isLatest = false
+    private var isMostView = false
+    private var isChannel = false
+    private var isFollowing = false
+    private var isReset=false
+
 
     private val TAG = "SearchFragment"
     private var param1: String? = null
@@ -55,9 +66,16 @@ class SearchFragment : Fragment() {
     ): View {
         binding = FragmentSearchBinding.inflate(inflater,container,false)
         networkHelper = NetworkHelper(requireContext())
+        appDatabase = AppDatabase.getInstance(requireContext())
+        application = App()
         val bundle = Bundle(arguments)
         var search = bundle.getString("search")
-        newsViewModel = ViewModelProvider(requireActivity(),NewsViewModelFactory(networkHelper))[NewsViewModel::class.java]
+        newsViewModel = ViewModelProvider(requireActivity(),NewsViewModelFactory(
+            networkHelper,
+            application,
+            appDatabase
+        ))[NewsViewModel::class.java]
+
 
 
         binding.apply {
@@ -111,23 +129,99 @@ class SearchFragment : Fragment() {
                 bottomSheetDialog.setContentView(customBottomSheetDialog.root)
 
                 customBottomSheetDialog.recommendedTv.setOnClickListener {
-                    it.setBackgroundResource(R.drawable.selected_tab)
+                    if(isRecommended){
+                        it.setBackgroundResource(R.drawable.unselected_tab)
+                        isRecommended=false
+                    }else {
+                        it.setBackgroundResource(R.drawable.selected_tab)
+                        isRecommended=true
+                    }
                 }
                 customBottomSheetDialog.latestTv.setOnClickListener {
-                    it.setBackgroundResource(R.drawable.selected_tab)
+                    if(isLatest){
+                        it.setBackgroundResource(R.drawable.unselected_tab)
+                        isLatest=false
+                    }else {
+                        it.setBackgroundResource(R.drawable.selected_tab)
+                        isLatest=true
+                    }
                 }
                 customBottomSheetDialog.mostViewedTv.setOnClickListener {
-                    it.setBackgroundResource(R.drawable.selected_tab)
+                    if(isMostView){
+                        it.setBackgroundResource(R.drawable.unselected_tab)
+                        isMostView=false
+                    }else {
+                        it.setBackgroundResource(R.drawable.selected_tab)
+                        isMostView=true
+                    }
                 }
                 customBottomSheetDialog.channelTv.setOnClickListener {
-                    it.setBackgroundResource(R.drawable.selected_tab)
+                    if(isChannel){
+                        it.setBackgroundResource(R.drawable.unselected_tab)
+                        isChannel=false
+                    }else {
+                        it.setBackgroundResource(R.drawable.selected_tab)
+                        isChannel=true
+                    }
                 }
                 customBottomSheetDialog.followingTv.setOnClickListener {
-                    it.setBackgroundResource(R.drawable.selected_tab)
+                    if(isFollowing){
+                        it.setBackgroundResource(R.drawable.unselected_tab)
+                        isFollowing=false
+                    }else {
+                        it.setBackgroundResource(R.drawable.selected_tab)
+                        isFollowing=true
+                    }
+                }
+                customBottomSheetDialog.resetLl.setOnClickListener {
+                    if (isReset){
+                        it.setBackgroundResource(R.drawable.unselected_tab)
+                        unSelectAll(customBottomSheetDialog)
+                        isReset=false
+                    }else{
+                        it.setBackgroundResource(R.drawable.selected_tab)
+                        selectAll(customBottomSheetDialog)
+                        isReset=true
+                    }
                 }
 
                 customBottomSheetDialog.saveCv.setOnClickListener {
+                    newsViewModel.getAllNewsSortBy(search.toString(),"popularity").observe(requireActivity(),{
+                        when(it){
+                            is NewsResource.LOADING -> {
+                                Log.d(TAG, "onCreateView: Loading")
+                                binding.progressBar.visibility = View.VISIBLE
+                            }
+                            is NewsResource.ERROR -> {
+                                Log.d(TAG, "onCreateView: ${it.message}")
+                                binding.progressBar.visibility = View.INVISIBLE
+                                binding.errorMessageTv.text = "Not internet connection"
+                                binding.errorMessageTv.visibility = View.VISIBLE
+                            }
+                            is NewsResource.SUCCESS ->{
+                                Log.d(TAG, "onCreateView: ${it.allNews}")
+                                binding.progressBar.visibility = View.INVISIBLE
+                                articleList = ArrayList(it.allNews.articles)
+                                if(it.allNews.totalResults!=0){
+                                    binding.errorMessageTv.visibility = View.INVISIBLE
+                                    allRvNewsRvAdapter = AllNewsRvAdapter(articleList,object :AllNewsRvAdapter.OnItemClickListener{
+                                        override fun onItemClick(article: Article) {
+                                            val bundle1 = Bundle()
+                                            bundle1.putSerializable("article",article)
+                                            findNavController().navigate(R.id.itemLatestNewsFragment,bundle1)
+                                        }
+                                    })
+                                    binding.allRvNew.adapter = allRvNewsRvAdapter
+                                }else{
+                                    binding.errorMessageTv.text = "No News"
+                                    binding.errorMessageTv.visibility = View.VISIBLE
+                                }
+
+                            }
+                        }
+                    })
                     bottomSheetDialog.dismiss()
+
                 }
 
                 bottomSheetDialog.setCancelable(false)
@@ -218,15 +312,32 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SearchFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+
+    private fun selectAll(customBottomSheetBinding: CustomBottomSheetBinding){
+        customBottomSheetBinding.recommendedTv.setBackgroundResource(R.drawable.selected_tab)
+        customBottomSheetBinding.latestTv.setBackgroundResource(R.drawable.selected_tab)
+        customBottomSheetBinding.mostViewedTv.setBackgroundResource(R.drawable.selected_tab)
+        customBottomSheetBinding.channelTv.setBackgroundResource(R.drawable.selected_tab)
+        customBottomSheetBinding.followingTv.setBackgroundResource(R.drawable.selected_tab)
+        isRecommended=true
+        isLatest=true
+        isMostView=true
+        isChannel=true
+        isFollowing=true
+
+    }
+    private fun unSelectAll(customBottomSheetBinding: CustomBottomSheetBinding){
+        customBottomSheetBinding.recommendedTv.setBackgroundResource(R.drawable.unselected_tab)
+        customBottomSheetBinding.latestTv.setBackgroundResource(R.drawable.unselected_tab)
+        customBottomSheetBinding.mostViewedTv.setBackgroundResource(R.drawable.unselected_tab)
+        customBottomSheetBinding.channelTv.setBackgroundResource(R.drawable.unselected_tab)
+        customBottomSheetBinding.followingTv.setBackgroundResource(R.drawable.unselected_tab)
+        isRecommended=false
+        isLatest=false
+        isMostView=false
+        isChannel=false
+        isFollowing=false
+
     }
 
 

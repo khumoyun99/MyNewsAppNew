@@ -1,19 +1,30 @@
 package com.example.mynewsapp.fragments
 
+import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.mynewsapp.App
 import com.example.mynewsapp.R
+import com.example.mynewsapp.database.AppDatabase
 import com.example.mynewsapp.databinding.FragmentItemLatestNewsBinding
 import com.example.mynewsapp.models.Article
+import com.example.mynewsapp.utils.NetworkHelper
+import com.example.mynewsapp.viewmodel.NewsViewModel
+import com.example.mynewsapp.viewmodel.NewsViewModelFactory
 import com.squareup.picasso.Picasso
 
 class ItemLatestNewsFragment : Fragment() {
     private lateinit var binding:FragmentItemLatestNewsBinding
+    private lateinit var appDatabase: AppDatabase
     private var islike=false
+    private lateinit var newsViewModel: NewsViewModel
+    private lateinit var networkHelper: NetworkHelper
+    private lateinit var application:App
 
 
     override fun onCreateView
@@ -22,8 +33,12 @@ class ItemLatestNewsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentItemLatestNewsBinding.inflate(inflater,container,false)
+        networkHelper = NetworkHelper(requireContext())
+        application = App()
+        appDatabase = AppDatabase.getInstance(requireContext())
         val bundle = Bundle(arguments)
         val article:Article = bundle.getSerializable("article") as Article
+
         binding.backArrowImg.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -34,7 +49,16 @@ class ItemLatestNewsFragment : Fragment() {
             }else{
                 binding.favoriteImg.setBackgroundResource(R.drawable.favorite_shape)
                 islike=true
+                newsViewModel = ViewModelProvider(
+                    requireActivity(),
+                    NewsViewModelFactory(
+                        networkHelper,
+                        application,
+                        appDatabase
+                    )
+                )[NewsViewModel::class.java]
 
+                newsViewModel.addArticle(article)
             }
         }
 

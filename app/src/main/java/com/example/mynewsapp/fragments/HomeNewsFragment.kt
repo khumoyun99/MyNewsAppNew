@@ -1,5 +1,6 @@
 package com.example.mynewsapp.fragments
 
+import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,9 +10,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.mynewsapp.App
 import com.example.mynewsapp.R
 import com.example.mynewsapp.adapter.AllNewsRvAdapter
 import com.example.mynewsapp.adapter.LatestNewsRvAdapter
+import com.example.mynewsapp.database.AppDatabase
 import com.example.mynewsapp.databinding.FragmentHomeNewsBinding
 import com.example.mynewsapp.models.Article
 import com.example.mynewsapp.utils.NetworkHelper
@@ -28,6 +31,8 @@ class HomeNewsFragment : Fragment() {
     private lateinit var latestNewsRvAdapter: LatestNewsRvAdapter
     private lateinit var articleList: ArrayList<Article>
     private lateinit var allNewsRvAdapter: AllNewsRvAdapter
+    private lateinit var appDatabase: AppDatabase
+    private lateinit var application: App
     private var tabList = arrayListOf("healthy","technology","finance","arts","sports","medicine")
     private val TAG = "HomeNewsFragment"
 
@@ -39,8 +44,13 @@ class HomeNewsFragment : Fragment() {
     ): View {
         binding = FragmentHomeNewsBinding.inflate(inflater,container,false)
         articleList = ArrayList()
+        application = App()
+        appDatabase = AppDatabase.getInstance(requireContext())
         networkHelper = NetworkHelper(requireContext())
-        newsViewModel = ViewModelProvider(requireActivity(),NewsViewModelFactory(networkHelper))[NewsViewModel::class.java]
+        newsViewModel = ViewModelProvider(
+            requireActivity(),
+            NewsViewModelFactory(networkHelper, application, appDatabase)
+        )[NewsViewModel::class.java]
         newsViewModel.getAllNews("favorite").observe(requireActivity(),{
             when(it){
                 is NewsResource.LOADING ->{
@@ -52,13 +62,16 @@ class HomeNewsFragment : Fragment() {
                 is NewsResource.SUCCESS ->{
                     Log.d(TAG, "onCreateView: ${it.allNews}")
                     articleList = ArrayList(it.allNews.articles)
-                    latestNewsRvAdapter = LatestNewsRvAdapter(articleList,object :LatestNewsRvAdapter.OnItemClickListener{
-                        override fun onItemClick(article: Article) {
-                            val bundle = Bundle()
-                            bundle.putSerializable("article",article)
-                            findNavController().navigate(R.id.itemLatestNewsFragment,bundle)
+                    latestNewsRvAdapter = LatestNewsRvAdapter(
+                        articleList,
+                        object : LatestNewsRvAdapter.OnItemClickListener {
+                            override fun onItemClick(article: Article) {
+                                val bundle = Bundle()
+                                bundle.putSerializable("article", article)
+                                findNavController().navigate(R.id.itemLatestNewsFragment, bundle)
+                            }
                         }
-                    })
+                    )
                     binding.latestRv.adapter = latestNewsRvAdapter
                 }
             }

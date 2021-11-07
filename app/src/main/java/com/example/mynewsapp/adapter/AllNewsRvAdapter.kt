@@ -33,7 +33,7 @@ class AllNewsRvAdapter(private val list:ArrayList<Article>,val listener:OnItemCl
     }
 
     override fun getItemCount(): Int {
-        return 15
+        return list.size
     }
     interface OnItemClickListener{
         fun onItemClick(article: Article)

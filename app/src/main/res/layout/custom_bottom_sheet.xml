@@ -47,7 +47,7 @@
                 android:id="@+id/filer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Resent"
+                android:text="Reset"
                 android:textSize="16sp"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
