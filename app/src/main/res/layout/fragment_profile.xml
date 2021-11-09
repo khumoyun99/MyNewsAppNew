@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:textColor="@color/black"
         android:textSize="30sp"
-        android:text="profile news fragment" />
+        android:padding="10dp"
+        android:text="Bu yerda reklama bo'lishi kerak edi" />
 
 </FrameLayout>

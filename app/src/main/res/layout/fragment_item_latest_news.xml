@@ -13,6 +13,7 @@
         android:layout_height="0dp"
         android:scaleType="centerCrop"
         android:src="@drawable/img"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -122,8 +123,22 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.95"
-        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintHorizontal_bias="0.90"
         />
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        android:layout_marginTop="60dp"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintRight_toRightOf="parent"
+        ads:layout_constraintLeft_toLeftOf="parent">
+    </com.google.android.gms.ads.AdView>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

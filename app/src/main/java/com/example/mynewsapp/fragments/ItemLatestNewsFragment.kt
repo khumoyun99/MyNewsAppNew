@@ -1,7 +1,7 @@
 package com.example.mynewsapp.fragments
 
-import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +16,9 @@ import com.example.mynewsapp.models.Article
 import com.example.mynewsapp.utils.NetworkHelper
 import com.example.mynewsapp.viewmodel.NewsViewModel
 import com.example.mynewsapp.viewmodel.NewsViewModelFactory
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
 import com.squareup.picasso.Picasso
 
 class ItemLatestNewsFragment : Fragment() {
@@ -25,6 +28,7 @@ class ItemLatestNewsFragment : Fragment() {
     private lateinit var newsViewModel: NewsViewModel
     private lateinit var networkHelper: NetworkHelper
     private lateinit var application:App
+    private val TAG = "ItemLatestNewsFragment"
 
 
     override fun onCreateView
@@ -36,6 +40,8 @@ class ItemLatestNewsFragment : Fragment() {
         networkHelper = NetworkHelper(requireContext())
         application = App()
         appDatabase = AppDatabase.getInstance(requireContext())
+
+
         val bundle = Bundle(arguments)
         val article:Article = bundle.getSerializable("article") as Article
         newsViewModel = ViewModelProvider(
@@ -46,6 +52,37 @@ class ItemLatestNewsFragment : Fragment() {
                 appDatabase
             )
         )[NewsViewModel::class.java]
+
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
+        binding.adView.adListener = object :AdListener(){
+            override fun onAdLoaded() {
+                super.onAdLoaded()
+                Log.d(TAG, "onAdLoaded: ")
+            }
+
+            override fun onAdFailedToLoad(p0: LoadAdError) {
+                super.onAdFailedToLoad(p0)
+                Log.d(TAG, "onAdFailedToLoad: ")
+            }
+
+            override fun onAdOpened() {
+                super.onAdOpened()
+                Log.d(TAG, "onAdOpened: ")
+            }
+
+            override fun onAdClicked() {
+                super.onAdClicked()
+                Log.d(TAG, "onAdClicked: ")
+            }
+            override fun onAdClosed() {
+                super.onAdClosed()
+                Log.d(TAG, "onAdClosed: ")
+            }
+
+        }
+
+
 
         newsViewModel.liveDataArticle.observe(requireActivity(),{
             it.forEach { article1 ->
@@ -84,5 +121,6 @@ class ItemLatestNewsFragment : Fragment() {
 
         return binding.root
     }
+
 
 }

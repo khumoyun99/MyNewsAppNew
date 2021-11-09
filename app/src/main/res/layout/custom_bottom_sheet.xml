@@ -98,10 +98,8 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="normal"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toRightOf="@id/recommended_tv"
             app:layout_constraintRight_toLeftOf="@id/most_viewed_tv"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/sort_by_tv" />
 
         <TextView
