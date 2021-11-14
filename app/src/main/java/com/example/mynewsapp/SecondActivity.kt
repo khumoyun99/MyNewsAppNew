@@ -19,35 +19,35 @@ class SecondActivity : AppCompatActivity() {
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        MobileAds.initialize(this){}
-        val adRequest = AdRequest.Builder().build()
-        binding.adView.loadAd(adRequest)
-
-        binding.adView.adListener = object : AdListener(){
-            override fun onAdLoaded() {
-                super.onAdLoaded()
-                Log.d(TAG, "onAdLoaded: ")
-            }
-
-            override fun onAdFailedToLoad(p0: LoadAdError) {
-                super.onAdFailedToLoad(p0)
-                Log.d(TAG, "onAdFailedToLoad: ")
-            }
-
-            override fun onAdOpened() {
-                super.onAdOpened()
-                Log.d(TAG, "onAdOpened: ")
-            }
-
-            override fun onAdClicked() {
-                super.onAdClicked()
-                Log.d(TAG, "onAdClicked: ")
-            }
-            override fun onAdClosed() {
-                super.onAdClosed()
-                Log.d(TAG, "onAdClosed: ")
-            }
-
-        }
+////        MobileAds.initialize(this){}
+//        val adRequest = AdRequest.Builder().build()
+//        binding.adView.loadAd(adRequest)
+//
+//        binding.adView.adListener = object : AdListener(){
+//            override fun onAdLoaded() {
+//                super.onAdLoaded()
+//                Log.d(TAG, "onAdLoaded: ")
+//            }
+//
+//            override fun onAdFailedToLoad(p0: LoadAdError) {
+//                super.onAdFailedToLoad(p0)
+//                Log.d(TAG, "onAdFailedToLoad: ")
+//            }
+//
+//            override fun onAdOpened() {
+//                super.onAdOpened()
+//                Log.d(TAG, "onAdOpened: ")
+//            }
+//
+//            override fun onAdClicked() {
+//                super.onAdClicked()
+//                Log.d(TAG, "onAdClicked: ")
+//            }
+//            override fun onAdClosed() {
+//                super.onAdClosed()
+//                Log.d(TAG, "onAdClosed: ")
+//            }
+//
+//        }
     }
 }

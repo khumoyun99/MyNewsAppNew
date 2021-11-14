@@ -86,7 +86,7 @@ class ItemLatestNewsFragment : Fragment() {
 
         newsViewModel.liveDataArticle.observe(requireActivity(),{
             it.forEach { article1 ->
-                if(article1==article){
+                if(article1.url==article.url){
                     islike=true
                 }
             }

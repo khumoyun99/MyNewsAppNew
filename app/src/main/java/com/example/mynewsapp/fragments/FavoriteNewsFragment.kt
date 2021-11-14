@@ -28,6 +28,8 @@ class FavoriteNewsFragment : Fragment() {
     private lateinit var allNewsRvAdapter: AllNewsRvAdapter
     private lateinit var application:App
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,6 +48,7 @@ class FavoriteNewsFragment : Fragment() {
             allNewsRvAdapter = AllNewsRvAdapter(ArrayList(it),object :AllNewsRvAdapter.OnItemClickListener{
                 override fun onItemClick(article: Article) {
                     val bundle = Bundle()
+//                    newsViewModel.deleteArticle(article)
                     bundle.putSerializable("article",article)
                     findNavController().navigate(R.id.itemLatestNewsFragment,bundle)
                 }
